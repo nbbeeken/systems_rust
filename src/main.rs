@@ -10,7 +10,7 @@ struct ProgramConfig {
 }
 
 enum InsType {
-    // RS, RT, RD, SHAMT, FUNC
+    // RS, RT, RD, SHAM, FUNC
     RType(u8, u8, u8, u8, u8),
     // OP, RS, RT, IMM
     IType(u8, u8, u8, u16),
@@ -34,7 +34,7 @@ fn main() {
                 "TYPE", "COUNT", "PERCENT"
             )
         }
-        handle_instructions(instructions);
+        handle_instructions(&instructions);
     }
 
     if config.opcodes {
@@ -44,7 +44,7 @@ fn main() {
                 "OPCODE", "COUNT", "PERCENT"
             )
         }
-        handle_opcodes(instructions);
+        handle_opcodes(&instructions);
     }
 
     if config.registers {
@@ -54,7 +54,7 @@ fn main() {
                 "REG", "USE", "R-TYPE", "I-TYPE", "PERCENT"
             )
         }
-        handle_registers(instructions, config.human_readable);
+        handle_registers(&instructions, config.human_readable);
     }
 }
 
@@ -107,7 +107,7 @@ fn parse_instructions() -> Result<Vec<u32>, io::Error> {
     }
 }
 
-fn handle_instructions(instructions: Vec<u32>) {
+fn handle_instructions(instructions: &Vec<u32>) {
     // I-Type	333		69.1%
     // J-Type	28		5.8%
     // R-Type	121		25.1%
@@ -148,12 +148,12 @@ fn handle_instructions(instructions: Vec<u32>) {
     );
 }
 
-fn handle_opcodes(instructions: Vec<u32>) {
+fn handle_opcodes(instructions: &Vec<u32>) {
 
     let mut opcode_counts = vec![0; 0x3F];
 
     for instruction in instructions {
-        match instruction_type(instruction) {
+        match instruction_type(&instruction) {
             InsType::JType(op, _) => {
                 opcode_counts[op as usize] += 1;
             }
@@ -174,7 +174,7 @@ fn handle_opcodes(instructions: Vec<u32>) {
     }
 }
 
-fn handle_registers(instructions: Vec<u32>, human_readable: bool) {
+fn handle_registers(instructions: &Vec<u32>, human_readable: bool) {
     let reg_map = vec![
         "zero", "at", "v0", "v1", "a0", "a1", "a2", "a3", "t0", "t1", "t2", "t3", "t4", "t5", "t6",
         "t7", "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "t8", "t9", "k0", "k1", "gp", "fp",
